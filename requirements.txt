@@ -1,4 +1,7 @@
 google-api-python-client
 google_auth_oauthlib
 virtualenv
-youtube-dl
+pandas
+openpyxl
+MySQL
+youtube_title_parse
