@@ -39,7 +39,8 @@ python3 csv-to-mysql.py
 ```
 Congrats! You have now successfully extracted and stored your Youtube playlist in a quick and convenient way, using the Youtube API and MySQL.
 
-## Plans for the future
+## Possibilities for the future
 1. Add a small data visualisation to see the distribution of music genres or artists
-2. Upload a new, specialised playlist back onto Youtube / Spotify / Amazon Prime Music (when the api for Amazon's available); for example, a playlist full of my favorite Taylor Swift songs;
-3. Develop a web application
+2. Create a simple recommendation system based on the user's music choices
+3. Upload a new, specialised playlist back onto Youtube / Spotify / Amazon Prime Music (when the api for Amazon's available); for example, a playlist full of my favorite Taylor Swift songs;
+4. Develop a web application
