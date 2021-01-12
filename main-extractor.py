@@ -48,7 +48,7 @@ def get_like_dislike_ratio(likes, dislikes):
     ratio = (likes - dislikes) / (likes + dislikes)
     return '{:.2%}'.format(ratio)
 
-def get_metadata_for_each_video(yt_client, video_id):
+def detailed_metadata_for_each_video(yt_client, video_id):
     # get general metadata
     # reference: https://developers-dot-devsite-v2-prod.appspot.com/youtube/v3/docs/videos/list#id
     meta = yt_client.videos().list(part='snippet, statistics, topicDetails', id=video_id).execute()
@@ -98,7 +98,7 @@ def get_playlists():
 
     related_playlists = content_data['items'][0]['contentDetails']['relatedPlaylists']
     # this lets you get the id for your Favorites playlist.
-    # print out the related_playlists field to look for any other playlists, e.g. liked videos
+    # you can print out the `related_playlists` variable to look for any other playlists, e.g. liked videos
     playlist_id = related_playlists['favorites']
     next_page_token = None
     video_list = []
@@ -122,24 +122,24 @@ def get_playlists():
 
             # make sure we have a valid video (and title)
             if video_title not in invalid_videos:
-                additional_metadata = get_metadata_for_each_video(yt_client, video_id)
+                detailed_metadata = detailed_metadata_for_each_video(yt_client, video_id)
                 tuple = get_artist_title(video_title)
                 if tuple != None:
                     artist, song_name = tuple[0], tuple[1]
                 else:
                     # if we cannot extract meaningful information from our title,
                     # use the channel title (person who uploaded the video) and default video title instead
-                    artist, song_name = additional_metadata['channel_title'], video_title
+                    artist, song_name = detailed_metadata['channel_title'], video_title
                 basic_metadata = { 'id':playlist_item_id,
-                                    'video_title':video_title,
-                                    'video_id': video_id,
-                                    'video_link':video_url,
-                                    'artist': artist,
-                                    'song_name': song_name }
+                                        'video_title':video_title,
+                                        'video_id': video_id,
+                                        'video_link':video_url,
+                                        'artist': artist,
+                                        'song_name': song_name }
 
                 # get a comprehensive dictionary of all the useful information needed for any given video
                 # add or remove any dictionary fields you'd like :)
-                song_metadata = merge_dicts(basic_metadata, additional_metadata)
+                song_metadata = merge_dicts(basic_metadata, detailed_metadata)
                 video_list.append(song_metadata)
                 # go to the next video on the playlist
                 next_page_token = res.get('nextPageToken')
