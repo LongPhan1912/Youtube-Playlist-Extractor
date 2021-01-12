@@ -188,5 +188,6 @@ def your_output_choice():
     # choice 2:
     # export_to_json(video_list)
 
-# your_output_choice()
+# if __name__ == "__main__":
+#     your_output_choice()
 
