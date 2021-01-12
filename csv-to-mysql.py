@@ -183,4 +183,15 @@ def get_all_selected_topics(csv_file_name, selected_topic):
 # -------------------SUPPLEMENTARY FUNCTIONS ENDS-------------------
 # ------------------------------------------------------------------
 
+# 8/ Create main music table
+def build_main_music_table(main_music_table_name):
+    initialise_main_music_table(main_music_table_name)
+    populate_main_music_table_from_csv('favorite-playlist.csv', main_music_table_name)
 
+# 9/ Build a new music table based on the genre you love
+def build_your_custom_music_table(your_table_name, main_music_table_name, column, chosen_value):
+    if check_table_exists(main_music_table_name) == False:
+        build_main_music_table(main_music_table_name)
+
+    initialise_custom_music_table(your_table_name, main_music_table_name)
+    populate_custom_music_table(your_table_name, main_music_table_name, column, chosen_value)
