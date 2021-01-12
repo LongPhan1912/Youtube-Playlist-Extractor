@@ -1,4 +1,4 @@
-# Youtube-Playlist-Extractor
+Youtube-Playlist-Extractor
 # Basic Overview
 
 # How to start
