@@ -9,16 +9,16 @@ import MySQLdb
 # if you wish to change the topic to 'FILM', 'SPORTS', or 'POLITICS'
 
 # 1/ initially, set up the MySQL connection and craft a cursor
-# mydb = MySQLdb.connect(host='localhost', user='root', passwd='yourPasswordHere')
-# cursor = mydb.cursor()
+mydb = MySQLdb.connect(host='localhost', user='root', passwd='yourPasswordHere')
+cursor = mydb.cursor()
 
 # 2/ create a database:
-# cursor.execute("CREATE DATABASE mydb")
-# mydb.commit
+cursor.execute("CREATE DATABASE mydb")
+mydb.commit()
 
-# 3/ after database is created, comment steps 1/ and 2/
-mydb = MySQLdb.connect(host='localhost', user='root', passwd='', database="mydb")
-cursor = mydb.cursor()
+# 3/ after database is created, comment out steps 1/ and 2/ and uncomment step 3/
+# mydb = MySQLdb.connect(host='localhost', user='root', passwd='', database="mydb")
+# cursor = mydb.cursor()
 
 # from here on out, whenever you call `cursor.execute()`, call `mydb.commit()` right afterwards
 
@@ -195,7 +195,7 @@ def build_your_custom_music_table(your_new_table_name, main_music_table_name, co
 
     initialise_custom_music_table(your_new_table_name, main_music_table_name)
     populate_custom_music_table(your_new_table_name, main_music_table_name, column, chosen_value)
-    
+
 def main(): # example; feel free to change the variable names to your choosing
     csv_file_name = 'favorite-playlist.csv' # name of csv file (use `main-extractor.py` first to create a csv file)
     your_new_table_name = 'ElectronicMusic' # name your table
@@ -203,7 +203,7 @@ def main(): # example; feel free to change the variable names to your choosing
     column = 'genre' # column choices: songTitle, artist, genre, videoLink, viewCount, likeToDislikeRatio
     chosen_value = 'ELECTRONIC MUSIC' # what you'd like to query, e.g. artist name or song title or genre
     # to get a list of all possible video topics or music genres, you can run the function get_all_selected_topics()
-    # e.g. get_all_selected_topics('favorite-playlist.csv', 
+    # e.g. get_all_selected_topics('favorite-playlist.csv',
 
     order_criteria = 'viewCount' # e.g. viewCount or likeToDislikeRatio or artist name in alphabetical order
     ascending_order = False # change to true if you want to print the table in ascending order (i.e. lowest order at the top)
