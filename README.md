@@ -22,20 +22,20 @@ To get the information for these missing fields, you would have to successful co
 * Follow the guide on https://developers.google.com/youtube/v3/getting-started to create your own API key and OAuth 2.0 Client ID (for Desktop).
 * Go back to https://console.developers.google.com and download the JSON for the Desktop Client ID credentials. Now, you can fill in the missing information in the `client_secret.json` file.
 
-Next, make sure to read through the `main-extractor.py` file to fill in your personal `api_key` and `channel_id`. Note that the `main()` function provides you with a list of playlist choices, so that you can get the `playlist_id` corresponding to a playlist of your choosing.
+Next, make sure to read carefully through the `main-extractor.py` file to fill in your personal `api_key` and `channel_id`. Note that the `main()` function provides you with a list of playlist choices, so that you can edit the `playlist_id` corresponding to a playlist of your choosing.
 
-After this, download the required libraries by running:
+After making all the aforementioned changes, go back to the terminal and download the required libraries:
 ```
 pip3 install -r requirements.txt
 ```
-You're all set to run the program.
+Everything's all set! Let's run the program.
 To extract your Youtube playlist to a CSV file, run:
 ```
 python3 main-extractor.py
 ```
 To convert this new CSV file into a MySQL database, follow the steps in the `csv-to-mysql.py` file. The `main()` function here also lets you customise many variables so that you can create new tables based on subcategories such as your favorite artist name or music genre. Once you have made your changes, run:
 ```
-python3 csv-to-mysql.py`
+python3 csv-to-mysql.py
 ```
 Congrats! You have now successfully extracted and stored your Youtube playlist in a quick and convenient way, using the Youtube API and MySQL.
 
