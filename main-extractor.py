@@ -17,12 +17,11 @@ from youtube_title_parse import get_artist_title
 
 # for your api_key, follow the guide here:
 # https://developers.google.com/youtube/registering_an_application
-api_key=''
-
+api_key='AIzaSyBZiL53M8__iQICSceoae-wto3Ey-0U2No'
 # for your channel_id, go to your Youtube channel and check the url, which looks similar to:
 # https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw for example
 # in this case, 'UCuAXFkgsw1L7xaCfnd5JJOw' is the channel_id
-channel_id=''
+channel_id='UCdXBzPm8sSVlrdFfCclbONQ'
 
 def get_authenticated_service():
     # references:
@@ -67,7 +66,8 @@ def detailed_metadata_for_each_video(yt_client, video_id):
         if comprehensive_stats.get('likeCount') and comprehensive_stats.get('dislikeCount'):
             metadata['likes'] = int(comprehensive_stats['likeCount'])
             metadata['dislikes'] = int(comprehensive_stats['dislikeCount'])
-            metadata['like_to_dislike_ratio'] = get_like_dislike_ratio(metadata['likes'], metadata['dislikes'])
+            if (metadata['likes'] + metadata['dislikes']) != 0:
+                metadata['like_to_dislike_ratio'] = get_like_dislike_ratio(metadata['likes'], metadata['dislikes'])
 
     # get topics such as music genre
     if main_item.get('topicDetails'):
@@ -90,16 +90,35 @@ def merge_dicts(x, y):
     z.update(y)
     return z
 
-def get_playlists():
-    yt_client = get_authenticated_service()
+# helper function to get all the available playlists for the user to choose from
+# returns a dictionary storing the names of the playlists and their corresponding id
+def get_playlist_choices(yt_client):
+    choices = dict()
+    # get default playlists and their ids, such as favorite videos or uploaded videos by the user
+    content_data = yt_client.channels().list(part='contentDetails', id=channel_id).execute()
+    default_playlists = content_data['items'][0]['contentDetails']['relatedPlaylists']
+    for key, val in default_playlists.items():
+        key = key.upper()
+        if not choices.get(key) and val:
+            choices[key] = val
+
+    # get custom playlists created by user
+    content_data = yt_client.playlists().list(part='snippet', channelId=channel_id).execute()
+    custom_playlists = content_data['items']
+    for item in custom_playlists:
+        key = item['snippet']['title'].upper()
+        val = item['id']
+        if not choices.get(key) and val:
+            choices[key] = val
+
+    # challenge: can you get the id of your liked videos?
+    return choices
+
+def extract_playlist(yt_client, playlist_id):
     # get the general content details
     # reference: https://developers.google.com/youtube/v3/docs/playlistItems/list#ruby
-    content_data = yt_client.channels().list(part='contentDetails', id=channel_id).execute()
-
-    related_playlists = content_data['items'][0]['contentDetails']['relatedPlaylists']
     # this lets you get the id for your Favorites playlist.
     # you can print out the `related_playlists` variable to look for any other playlists, e.g. liked videos
-    playlist_id = related_playlists['favorites']
     next_page_token = None
     video_list = []
     count = 0
@@ -168,27 +187,25 @@ def export_to_csv(video_list):
 
 def export_to_excel(video_list):
     df = pd.read_csv('favorite-playlist.csv')
-    output_file = pd.ExcelWriter('favorites-playlist.xlsx')
+    output_file = pd.ExcelWriter('favorite-playlist.xlsx')
     df.to_excel(output_file, index=False)
     output_file.save()
 
-# output the full list of videos you have in your chosen playlist (in this case, the Favorites playlist)
-def your_output_choice():
+def main():
+    yt_client = get_authenticated_service()
+    playlist_choices = get_playlist_choices(yt_client)
+    # print out the `playlist_choices` to pick which playlist you would like to extract
+    # the playlist_id will give the corresponding id to the chosen playlist
+    playlist_id = playlist_choices['FAVORITES']
+    # output the full list of videos you have in your chosen playlist
     # depending on the length of your playlist, please use this function call sparsely
     # you are only limited to 10,000 api calls per day, so this can be a very expensive operation
-    video_list = get_playlists()
-
-    # warning: if you choose choice (0 and 2) or (1 and 2) or all three, you're making loads of api calls
-    # so pick only one choice, or both (0 and 1)
-
-    # choice 0:
+    video_list = extract_playlist(yt_client, playlist_id)
+    # finally output your video list into a csv so we can process it later using MySQL
     export_to_csv(video_list)
-    # choice 1 (needs choice 0 to work):
-    export_to_excel(video_list)
-    # choice 2:
+    # optional:
+    # export_to_excel(video_list)
     # export_to_json(video_list)
 
-# uncomment when you are ready to run the program.
-# if __name__ == "__main__":
-#     your_output_choice()
-
+if __name__ == "__main__":
+    main()
