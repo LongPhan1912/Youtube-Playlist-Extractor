@@ -100,8 +100,8 @@ def populate_main_music_table_from_csv(csv_file_name, table_name):
     csv_file.close()
 
 # 7/ fill up our custom table using data from the main music table
-def populate_custom_music_table(table_name, main_music_table_name, column, chosen_value):
-    cursor.execute(f"INSERT INTO {table_name} (mainSongID, songTitle, artist, genre, videoLink, viewCount, likeToDislikeRatio)\
+def populate_custom_music_table(your_new_table_name, main_music_table_name, column, chosen_value):
+    cursor.execute(f"INSERT INTO {your_new_table_name} (mainSongID, songTitle, artist, genre, videoLink, viewCount, likeToDislikeRatio)\
                     SELECT songID, songTitle, artist, genre, videoLink, viewCount, likeToDislikeRatio \
                     FROM {main_music_table_name} WHERE {column} LIKE '%{chosen_value}%'")
     mydb.commit()
@@ -184,14 +184,32 @@ def get_all_selected_topics(csv_file_name, selected_topic):
 # ------------------------------------------------------------------
 
 # 8/ Create main music table
-def build_main_music_table(main_music_table_name):
+def build_main_music_table(csv_file_name, main_music_table_name):
     initialise_main_music_table(main_music_table_name)
-    populate_main_music_table_from_csv('favorite-playlist.csv', main_music_table_name)
+    populate_main_music_table_from_csv(csv_file_name, main_music_table_name)
 
 # 9/ Build a new music table based on the genre you love
-def build_your_custom_music_table(your_table_name, main_music_table_name, column, chosen_value):
+def build_your_custom_music_table(your_new_table_name, main_music_table_name, column, chosen_value):
     if check_table_exists(main_music_table_name) == False:
         build_main_music_table(main_music_table_name)
 
-    initialise_custom_music_table(your_table_name, main_music_table_name)
-    populate_custom_music_table(your_table_name, main_music_table_name, column, chosen_value)
+    initialise_custom_music_table(your_new_table_name, main_music_table_name)
+    populate_custom_music_table(your_new_table_name, main_music_table_name, column, chosen_value)
+    
+def main(): # example; feel free to change the variable names to your choosing
+    csv_file_name = 'favorite-playlist.csv' # name of csv file (use `main-extractor.py` first to create a csv file)
+    your_new_table_name = 'ElectronicMusic' # name your table
+    main_music_table_name = 'MainMusic' # name the main music table
+    column = 'genre' # column choices: songTitle, artist, genre, videoLink, viewCount, likeToDislikeRatio
+    chosen_value = 'ELECTRONIC MUSIC' # what you'd like to query, e.g. artist name or song title or genre
+    # to get a list of all possible video topics or music genres, you can run the function get_all_selected_topics()
+    # e.g. get_all_selected_topics('favorite-playlist.csv', 
+
+    order_criteria = 'viewCount' # e.g. viewCount or likeToDislikeRatio or artist name in alphabetical order
+    ascending_order = False # change to true if you want to print the table in ascending order (i.e. lowest order at the top)
+    order = 'ASC' if ascending_order == True else 'DESC'
+    build_your_custom_music_table(your_new_table_name, main_music_table_name, column, chosen_value)
+    print_table_by_criteria(your_new_table_name, order_criteria, order)
+
+if __name__ == "__main__":
+    main()
